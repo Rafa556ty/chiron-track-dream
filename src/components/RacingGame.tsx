@@ -668,8 +668,82 @@ export function RacingGame() {
           </div>
         )}
 
+        {/* Phone lying down: steering under the left thumb, pedals under the right */}
+        {playing && landscape && (
+          <div className="pointer-events-none absolute inset-0 z-10">
+            <div className="pointer-events-auto absolute bottom-[max(env(safe-area-inset-bottom),14px)] left-[max(env(safe-area-inset-left),18px)] flex flex-col items-start gap-2">
+              <button
+                type="button"
+                {...press("horn")}
+                aria-label={t.horn}
+                className={cn(
+                  "corner-cut flex items-center gap-1.5 border border-hud-border px-4 py-1.5 shadow-lg transition-all duration-75",
+                  active.horn ? "scale-95 border-primary bg-primary text-primary-foreground shadow-glow" : "bg-hud/90 text-foreground/90",
+                )}
+              >
+                <Volume1 className="size-4 text-primary" />
+                <span className="font-display text-xs tracking-widest">{t.horn}</span>
+              </button>
+              <div className="flex gap-3">
+                {(["left", "right"] as const).map((side) => (
+                  <button
+                    key={side}
+                    type="button"
+                    {...press(side)}
+                    aria-label={side === "left" ? "Steer Left" : "Steer Right"}
+                    className={cn(
+                      "flex size-[min(92px,26vh)] items-center justify-center rounded-full border-2 backdrop-blur-xs transition-transform duration-75 select-none",
+                      active[side] ? "scale-95 border-primary bg-steer-active text-primary" : "border-hud-border bg-hud/70 text-foreground/85",
+                    )}
+                  >
+                    {side === "left" ? <ChevronLeft className="size-12" strokeWidth={2.5} /> : <ChevronRight className="size-12" strokeWidth={2.5} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pointer-events-auto absolute bottom-[max(env(safe-area-inset-bottom),14px)] right-[max(env(safe-area-inset-right),18px)] flex flex-col items-end gap-2">
+              <button
+                type="button"
+                onClick={cycleCamera}
+                aria-label={t.camera}
+                className="corner-cut flex items-center gap-1.5 border border-hud-border bg-hud/90 px-4 py-1.5 text-foreground/90 shadow-lg active:scale-95"
+              >
+                <Camera className="size-4 text-primary" />
+                <span className="font-display text-xs tracking-widest">{camLabels[camView]}</span>
+              </button>
+              <div className="flex items-end gap-3">
+                <button
+                  type="button"
+                  {...press("brake")}
+                  aria-label={t.brake}
+                  className={cn(
+                    "corner-cut flex h-[min(96px,27vh)] w-[min(84px,24vh)] flex-col items-center justify-end border-2 pb-2 transition-transform duration-75 select-none",
+                    active.brake ? "translate-y-1 scale-95 border-brake bg-brake/30" : "border-pedal-ridge bg-pedal",
+                  )}
+                >
+                  <div className="pedal-ridges mb-1.5 h-[40%] w-[78%]" />
+                  <span className={cn("font-display text-sm tracking-widest", active.brake ? "text-brake" : "text-foreground")}>{t.brake}</span>
+                </button>
+                <button
+                  type="button"
+                  {...press("gas")}
+                  aria-label={t.gas}
+                  className={cn(
+                    "corner-cut flex h-[min(128px,36vh)] w-[min(84px,24vh)] flex-col items-center justify-end border-2 pb-2 transition-transform duration-75 select-none",
+                    active.gas ? "translate-y-1 scale-95 border-pedal-active bg-primary/25" : "border-pedal-ridge bg-pedal",
+                  )}
+                >
+                  <div className="pedal-ridges mb-1.5 h-[50%] w-[72%]" />
+                  <span className={cn("font-display text-sm tracking-wider", active.gas ? "text-primary" : "text-foreground")}>{t.gas}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Touch Controls Layer */}
-        {playing && (
+        {playing && !landscape && (
           <div className="absolute inset-0 z-10 pointer-events-none">
             {/* Steering Left / Right Side Touch Areas */}
             {!isPc && (["left", "right"] as const).map((side) => (
