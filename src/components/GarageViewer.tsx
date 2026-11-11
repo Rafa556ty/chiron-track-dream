@@ -223,6 +223,8 @@ export function GarageViewer({ labels, onClose, selectedCar, chironOwned, onSele
         observer.disconnect();
         controls.removeEventListener("start", onStart);
         controls.removeEventListener("end", onEnd);
+        for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"] as const)
+          container.removeEventListener(type, remap, { capture: true });
         if (resumeTimer) clearTimeout(resumeTimer);
         controls.dispose();
         scene.traverse((obj) => {
