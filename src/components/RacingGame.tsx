@@ -1132,7 +1132,7 @@ export function RacingGame() {
 
               <div className="space-y-3">
                 <Button
-                  className="w-full py-6 text-lg font-display tracking-widest bg-primary text-black hover:bg-primary/90 corner-cut font-bold shadow-glow"
+                  className="w-full py-6 text-lg font-display tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 corner-cut font-bold shadow-glow"
                   onClick={togglePause}
                 >
                   <Play className="mr-2 size-5 fill-current" />
