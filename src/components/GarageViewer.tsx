@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { toRotatedPoint } from "@/game/device-ui";
 import type * as THREE from "three";
 import { X } from "lucide-react";
 import revueltoPhoto from "@/assets/revuelto.png";
@@ -145,6 +146,17 @@ export function GarageViewer({ labels, onClose, selectedCar, chironOwned, onSele
       camera.position.copy(target).addScaledVector(viewDirection, baseDistance);
       camera.lookAt(target);
 
+      // Phone standing up: the game is drawn turned sideways, so turn the
+      // finger's screen position the same way before the orbit controls read it.
+      const remap = (e: PointerEvent) => {
+        if (!container.closest("[data-phone-rotated]")) return;
+        const p = toRotatedPoint(e.clientX, e.clientY, window.innerWidth);
+        for (const [k, v] of [["clientX", p.x], ["clientY", p.y], ["pageX", p.x], ["pageY", p.y]] as const)
+          Object.defineProperty(e, k, { value: v, configurable: true });
+      };
+      for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"] as const)
+        container.addEventListener(type, remap, { capture: true });
+
       const controls = new OrbitControls(camera, canvas);
       controls.target.copy(target);
       controls.enableDamping = true;
@@ -211,6 +223,8 @@ export function GarageViewer({ labels, onClose, selectedCar, chironOwned, onSele
         observer.disconnect();
         controls.removeEventListener("start", onStart);
         controls.removeEventListener("end", onEnd);
+        for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"] as const)
+          container.removeEventListener(type, remap, { capture: true });
         if (resumeTimer) clearTimeout(resumeTimer);
         controls.dispose();
         scene.traverse((obj) => {

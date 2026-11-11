@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectUi, resolveUi, shadowOffset, touchOrientation } from "./device-ui";
+import { detectUi, resolveUi, rotatedFrame, shadowOffset, toRotatedPoint, touchOrientation } from "./device-ui";
 
 describe("device layout", () => {
   it("phones get touch controls", () => {
@@ -19,8 +19,18 @@ describe("phone orientation", () => {
   it("phone lying down (landscape) plays", () => {
     expect(touchOrientation({ width: 780, height: 360 })).toBe("landscape");
   });
-  it("phone standing up (portrait) asks to rotate", () => {
+  it("phone standing up (portrait) turns the game sideways", () => {
     expect(touchOrientation({ width: 360, height: 780 })).toBe("rotate");
+    const f = rotatedFrame({ width: 360, height: 780 });
+    expect(f.width).toBe(780);
+    expect(f.height).toBe(360);
+    expect(f.transform).toBe("translateX(360px) rotate(90deg)");
+  });
+  it("a touch maps into the sideways game", () => {
+    // Top-right corner of the upright screen is the game's top-left corner.
+    expect(toRotatedPoint(360, 0, 360)).toEqual({ x: 0, y: 0 });
+    // Bottom-left of the upright screen is the game's bottom-right corner.
+    expect(toRotatedPoint(0, 780, 360)).toEqual({ x: 780, y: 360 });
   });
 });
 
