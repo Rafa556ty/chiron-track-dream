@@ -27,6 +27,7 @@ import {
   Pause,
   Play,
   ShoppingBag,
+  Smartphone,
 } from "lucide-react";
 
 import revueltoImg from "@/assets/revuelto.png";
@@ -58,7 +59,7 @@ import {
 } from "@/game/engine";
 import { LANGUAGES, TRANSLATIONS, getSavedLanguage, saveLanguage, type Language } from "@/lib/i18n";
 import type { CameraView } from "@/game/camera-views";
-import { detectUi, resolveUi, type UiMode, type UiPref } from "@/game/device-ui";
+import { detectUi, resolveUi, touchOrientation, type TouchOrientation, type UiMode, type UiPref } from "@/game/device-ui";
 
 type Key = keyof GameInput;
 type Phase = "loading" | "menu" | "playing" | "over";
@@ -68,6 +69,20 @@ const BEST_POLICE_KEY = "revuelto-police-best-distance";
 const CONTROLS_H = 176;
 
 const formatKm = (m: number) => (m / 1000).toFixed(2);
+
+/** Android: go fullscreen and hold the phone lying down. Silently ignored elsewhere (iOS). */
+async function lockLandscape() {
+  try {
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen?.({ navigationUI: "hide" });
+  } catch {
+    // Fullscreen refused: the rotate hint still guides the player.
+  }
+  try {
+    await (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }).lock?.("landscape");
+  } catch {
+    // Orientation lock unsupported on this browser.
+  }
+}
 
 const triggerHaptic = (pattern: number | number[]) => {
   try {
@@ -201,13 +216,16 @@ export function RacingGame() {
   const [showPoliceOff, setShowPoliceOff] = useState(false);
   const [uiPref, setUiPref] = useState<UiPref>("auto");
   const [detectedUi, setDetectedUi] = useState<UiMode>("touch");
+  const [orientation, setOrientation] = useState<TouchOrientation>("landscape");
   const uiMode = resolveUi(uiPref, detectedUi);
   const isPc = uiMode === "pc";
+  const landscape = !isPc && orientation === "landscape";
+  const needsRotate = !isPc && orientation === "rotate";
   useEffect(() => {
     const saved = localStorage.getItem("ui-pref");
     if (saved === "pc" || saved === "touch" || saved === "auto") setUiPref(saved);
     const coarse = window.matchMedia("(pointer: coarse)");
-    const update = () =>
+    const update = () => {
       setDetectedUi(
         detectUi({
           touchPoints: navigator.maxTouchPoints || 0,
@@ -215,6 +233,8 @@ export function RacingGame() {
           width: window.innerWidth,
         }),
       );
+      setOrientation(touchOrientation({ width: window.innerWidth, height: window.innerHeight }));
+    };
     update();
     window.addEventListener("resize", update);
     coarse.addEventListener("change", update);
@@ -231,9 +251,9 @@ export function RacingGame() {
     const engine = engineRef.current;
     const el = containerRef.current;
     if (!engine || !el) return;
-    engine.setBottomInset(isPc ? 0 : CONTROLS_H);
+    engine.setBottomInset(isPc || landscape ? 0 : CONTROLS_H);
     engine.resize(el.clientWidth, el.clientHeight);
-  }, [isPc, phase]);
+  }, [isPc, landscape, phase]);
 
   const t = TRANSLATIONS[lang] || TRANSLATIONS["pt-BR"];
 
@@ -434,6 +454,7 @@ export function RacingGame() {
 
   const startGame = (chosenMode?: "free" | "police") => {
     const selected = chosenMode ?? mode;
+    if (!isPc) void lockLandscape();
     audioRef.current?.unlock();
     audioRef.current?.rev();
     setResult(null);
@@ -514,7 +535,7 @@ export function RacingGame() {
         ref={containerRef}
         className={cn(
           "relative h-full w-full overflow-hidden select-none",
-          isPc ? "max-w-none" : "max-w-[500px]",
+          isPc || landscape ? "max-w-none" : "max-w-[500px]",
         )}
       >
         <canvas ref={canvasRef} className="hidden" />
