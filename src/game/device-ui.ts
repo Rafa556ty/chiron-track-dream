@@ -13,12 +13,26 @@ export function resolveUi(pref: UiPref, detected: UiMode): UiMode {
 }
 
 /**
- * Phones play lying down (landscape). In portrait the game asks the player to
- * rotate the phone instead of showing the controls.
+ * Phones always play lying down (landscape). When the browser is in portrait
+ * ("rotate"), the game draws itself turned 90° so it is already sideways.
  */
 export type TouchOrientation = "landscape" | "rotate";
 export function touchOrientation(v: { width: number; height: number }): TouchOrientation {
   return v.width >= v.height ? "landscape" : "rotate";
+}
+
+/** CSS transform that turns the portrait screen into a landscape game (90° clockwise). */
+export function rotatedFrame(v: { width: number; height: number }) {
+  return {
+    width: v.height,
+    height: v.width,
+    transform: `translateX(${v.width}px) rotate(90deg)`,
+  };
+}
+
+/** Screen touch point -> point inside the game turned 90° clockwise. */
+export function toRotatedPoint(clientX: number, clientY: number, screenWidth: number) {
+  return { x: clientY, y: screenWidth - clientX };
 }
 
 /**

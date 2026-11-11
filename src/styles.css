@@ -3,8 +3,15 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-/* Phone lying down (short landscape screen). */
-@custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 500px));
+/* Phone lying down: a short landscape screen, or a portrait screen the game turned sideways. */
+@custom-variant phone-landscape {
+  @media (orientation: landscape) and (max-height: 500px) {
+    @slot;
+  }
+  &:where([data-phone-rotated] *) {
+    @slot;
+  }
+}
 
 /*
  * Design system definition.
@@ -220,16 +227,6 @@
   50% {
     opacity: 1;
   }
-}
-
-@keyframes rotate-hint {
-  0%, 20% { transform: rotate(0deg); }
-  55%, 85% { transform: rotate(-90deg); }
-  100% { transform: rotate(0deg); }
-}
-
-@utility animate-rotate-hint {
-  animation: rotate-hint 2.4s ease-in-out infinite;
 }
 
 @utility animate-rise-in {

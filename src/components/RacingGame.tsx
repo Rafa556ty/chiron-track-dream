@@ -27,7 +27,6 @@ import {
   Pause,
   Play,
   ShoppingBag,
-  Smartphone,
 } from "lucide-react";
 
 import revueltoImg from "@/assets/revuelto.png";
@@ -59,7 +58,7 @@ import {
 } from "@/game/engine";
 import { LANGUAGES, TRANSLATIONS, getSavedLanguage, saveLanguage, type Language } from "@/lib/i18n";
 import type { CameraView } from "@/game/camera-views";
-import { detectUi, resolveUi, touchOrientation, type TouchOrientation, type UiMode, type UiPref } from "@/game/device-ui";
+import { detectUi, resolveUi, rotatedFrame, touchOrientation, type TouchOrientation, type UiMode, type UiPref } from "@/game/device-ui";
 
 type Key = keyof GameInput;
 type Phase = "loading" | "menu" | "playing" | "over";
@@ -70,19 +69,6 @@ const CONTROLS_H = 176;
 
 const formatKm = (m: number) => (m / 1000).toFixed(2);
 
-/** Android: go fullscreen and hold the phone lying down. Silently ignored elsewhere (iOS). */
-async function lockLandscape() {
-  try {
-    if (!document.fullscreenElement) await document.documentElement.requestFullscreen?.({ navigationUI: "hide" });
-  } catch {
-    // Fullscreen refused: the rotate hint still guides the player.
-  }
-  try {
-    await (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }).lock?.("landscape");
-  } catch {
-    // Orientation lock unsupported on this browser.
-  }
-}
 
 const triggerHaptic = (pattern: number | number[]) => {
   try {
@@ -219,8 +205,10 @@ export function RacingGame() {
   const [orientation, setOrientation] = useState<TouchOrientation>("landscape");
   const uiMode = resolveUi(uiPref, detectedUi);
   const isPc = uiMode === "pc";
-  const landscape = !isPc && orientation === "landscape";
-  const needsRotate = !isPc && orientation === "rotate";
+  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
+  // Phones always get the lying-down layout; in portrait the whole game is turned sideways.
+  const landscape = !isPc;
+  const rotated = !isPc && orientation === "rotate" && screenSize.width > 0;
   useEffect(() => {
     const saved = localStorage.getItem("ui-pref");
     if (saved === "pc" || saved === "touch" || saved === "auto") setUiPref(saved);
@@ -234,6 +222,7 @@ export function RacingGame() {
         }),
       );
       setOrientation(touchOrientation({ width: window.innerWidth, height: window.innerHeight }));
+      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
     };
     update();
     window.addEventListener("resize", update);
@@ -454,7 +443,6 @@ export function RacingGame() {
 
   const startGame = (chosenMode?: "free" | "police") => {
     const selected = chosenMode ?? mode;
-    if (!isPc) void lockLandscape();
     audioRef.current?.unlock();
     audioRef.current?.rev();
     setResult(null);
@@ -528,7 +516,12 @@ export function RacingGame() {
 
   return (
     <main
-      className="game-surface fixed inset-0 flex justify-center bg-background"
+      className={cn(
+        "game-surface fixed flex justify-center bg-background",
+        rotated ? "left-0 top-0 origin-top-left" : "inset-0",
+      )}
+      style={rotated ? rotatedFrame(screenSize) : undefined}
+      data-phone-rotated={rotated ? "" : undefined}
       onPointerDown={() => audioRef.current?.unlock()}
     >
       <div
@@ -864,18 +857,6 @@ export function RacingGame() {
                 </button>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Phone standing up: ask to lie it down (landscape) */}
-        {needsRotate && phase !== "loading" && (
-          <div role="alertdialog" aria-label={t.rotateTitle} className="absolute inset-0 z-[90] flex flex-col items-center justify-center gap-5 bg-background px-8 text-center">
-            <Smartphone className="size-16 animate-rotate-hint text-primary" strokeWidth={1.6} />
-            <h2 className="font-display text-3xl tracking-widest text-foreground">{t.rotateTitle}</h2>
-            <p className="max-w-xs text-sm text-muted-foreground">{t.rotateDesc}</p>
-            <Button variant="race" size="lg" className="font-display tracking-widest" onClick={() => void lockLandscape()}>
-              {t.rotateAction}
-            </Button>
           </div>
         )}
 
