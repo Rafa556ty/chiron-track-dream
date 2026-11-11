@@ -220,6 +220,16 @@
   }
 }
 
+@keyframes rotate-hint {
+  0%, 20% { transform: rotate(0deg); }
+  55%, 85% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@utility animate-rotate-hint {
+  animation: rotate-hint 2.4s ease-in-out infinite;
+}
+
 @utility animate-rise-in {
   animation: rise-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
