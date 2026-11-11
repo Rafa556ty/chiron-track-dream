@@ -782,7 +782,7 @@ export function RacingGame() {
                   className={cn(
                     "corner-cut flex items-center justify-center gap-2 px-6 py-2 border border-hud-border transition-all duration-75 active:scale-95 shadow-lg",
                     active.horn
-                      ? "border-primary bg-primary text-black font-bold scale-95 shadow-glow"
+                      ? "border-primary bg-primary text-primary-foreground font-bold scale-95 shadow-glow"
                       : "bg-hud/90 text-foreground/90 hover:bg-secondary",
                   )}
                 >
