@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectUi, resolveUi, shadowOffset } from "./device-ui";
+import { detectUi, resolveUi, shadowOffset, touchOrientation } from "./device-ui";
 
 describe("device layout", () => {
   it("phones get touch controls", () => {
@@ -12,6 +12,15 @@ describe("device layout", () => {
     expect(resolveUi("touch", "pc")).toBe("touch");
     expect(resolveUi("pc", "touch")).toBe("pc");
     expect(resolveUi("auto", "touch")).toBe("touch");
+  });
+});
+
+describe("phone orientation", () => {
+  it("phone lying down (landscape) plays", () => {
+    expect(touchOrientation({ width: 780, height: 360 })).toBe("landscape");
+  });
+  it("phone standing up (portrait) asks to rotate", () => {
+    expect(touchOrientation({ width: 360, height: 780 })).toBe("rotate");
   });
 });
 

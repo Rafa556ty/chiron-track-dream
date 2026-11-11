@@ -13,6 +13,15 @@ export function resolveUi(pref: UiPref, detected: UiMode): UiMode {
 }
 
 /**
+ * Phones play lying down (landscape). In portrait the game asks the player to
+ * rotate the phone instead of showing the controls.
+ */
+export type TouchOrientation = "landscape" | "rotate";
+export function touchOrientation(v: { width: number; height: number }): TouchOrientation {
+  return v.width >= v.height ? "landscape" : "rotate";
+}
+
+/**
  * Sun shadow offset under the car (metres, x/z). The sun's bearing drifts as
  * the road winds, so the shadow slides from under the car to its side; in the
  * tunnel each passing ceiling lamp sweeps it from front to back.
