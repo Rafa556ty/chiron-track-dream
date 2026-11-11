@@ -40,7 +40,8 @@ use the editor.
 - User-supplied traffic GLBs are simplified + meshopt offline; a moving part (Bugatti wing) gets `Wing_`-prefixed materials so `models3d.ts` batches it into an `active-wing` group, and render3d draws it as extra instanced parts with per-car lift from pure `stepTrafficWing`.
 - Selectable camera views are pure poses in `src/game/camera-views.ts` applied by render3d; scenery and traffic render far behind the car so the reverse camera never exposes unloaded world.
 - Bake road environment reflections once in `road-lighting.ts`; use shared contact textures and local light halos rather than full-screen phone post-processing to limit rendering cost.
-- PC vs phone layout is decided by pure `detectUi`/`resolveUi` in `src/game/device-ui.ts` with a saved manual override in settings; keeps the rule testable.
+- PC vs phone layout is decided by pure `detectUi`/`resolveUi` in `src/game/device-ui.ts` with a saved manual override in settings, and phone orientation by `touchOrientation` (portrait shows a rotate prompt, landscape shows thumb controls); keeps the rules testable.
+- Playable Chiron look/perf tweaks are applied at load time in `models3d.ts` (`blackenChironRims`) and race-only in render3d (`trimChironForTrack`), never by editing or swapping the GLB; the garage keeps the full model.
 - Traffic car light signatures and wipers live in src/game/vehicle-lights.ts as instanced overlays (one batch per model) — keeps draw calls flat.
 - New owner-supplied media uses CDN asset pointers; traffic-audio.ts owns distance-limited Web Audio voices driven by engine telemetry to keep per-frame audio outside React.
 - CarStore is an in-game DEMO overlay backed by a pure catalog; selections show the availability notice and never charge coins or unlock vehicles.
