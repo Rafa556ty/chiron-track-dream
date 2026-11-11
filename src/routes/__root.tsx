@@ -82,19 +82,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
       },
-      { name: "theme-color", content: "#141518" },
+      { name: "theme-color", content: "#0d0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { title: "Revuelto Rodovia — Jogo de Corrida" },
+      { title: "Supercar Highway Dash — Jogo de Corrida" },
       {
         name: "description",
         content:
-          "Pilote uma Lamborghini Revuelto preta pela rodovia. Acelere, freie e desvie do trânsito.",
+          "Pilote supercarros como a Lamborghini Revuelto e a Bugatti Chiron pela rodovia. Acelere, desvie do trânsito e personalize seu carro.",
       },
-      { property: "og:title", content: "Revuelto Rodovia — Jogo de Corrida" },
+      { property: "og:title", content: "Supercar Highway Dash — Jogo de Corrida" },
       {
         property: "og:description",
         content:
-          "Pilote uma Lamborghini Revuelto preta pela rodovia. Acelere, freie e desvie do trânsito.",
+          "Pilote supercarros como a Lamborghini Revuelto e a Bugatti Chiron pela rodovia. Acelere, desvie do trânsito e personalize seu carro.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -39,7 +39,7 @@ import mustangBlackImg from "@/assets/traffic-mustang-black.png";
 import sedanImg from "@/assets/traffic-sedan.png";
 import hatchImg from "@/assets/traffic-hatch.png";
 import pickupImg from "@/assets/traffic-pickup.png";
-import bullEmblem from "@/assets/bull-emblem.png";
+import gameLogo from "@/assets/brand/supercar-highway-dash-logo.webp.asset.json";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -899,18 +899,14 @@ export function RacingGame() {
                 </button>
               </div>
 
+              <h1 className="sr-only">Supercar Highway Dash</h1>
               <img
-                src={bullEmblem}
-                alt="Emblem"
-                width={200}
-                height={228}
-                className={cn("mx-auto mb-2 w-auto drop-shadow-[0_4px_16px_var(--color-primary)]", landscape ? "h-14" : "h-20")}
+                src={gameLogo.url}
+                alt="Supercar Highway Dash"
+                width={680}
+                height={540}
+                className={cn("mx-auto w-auto drop-shadow-[0_6px_24px_var(--color-primary)]", landscape ? "h-36" : "h-48")}
               />
-              <p className="font-display text-lg tracking-[0.4em] text-primary">{t.brand}</p>
-              <h1 className={cn("font-display leading-[0.88] text-foreground", landscape ? "text-5xl" : "text-6xl")}>{t.model}</h1>
-              <p className="mt-1 font-display text-xl tracking-[0.3em] text-muted-foreground">
-                {t.subtitle}
-              </p>
             </div>
 
             {/* Menu Options & Mode Selector */}
