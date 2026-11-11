@@ -867,6 +867,18 @@ export function RacingGame() {
           </div>
         )}
 
+        {/* Phone standing up: ask to lie it down (landscape) */}
+        {needsRotate && phase !== "loading" && (
+          <div role="alertdialog" aria-label={t.rotateTitle} className="absolute inset-0 z-[90] flex flex-col items-center justify-center gap-5 bg-background px-8 text-center">
+            <Smartphone className="size-16 animate-rotate-hint text-primary" strokeWidth={1.6} />
+            <h2 className="font-display text-3xl tracking-widest text-foreground">{t.rotateTitle}</h2>
+            <p className="max-w-xs text-sm text-muted-foreground">{t.rotateDesc}</p>
+            <Button variant="race" size="lg" className="font-display tracking-widest" onClick={() => void lockLandscape()}>
+              {t.rotateAction}
+            </Button>
+          </div>
+        )}
+
         {/* Main Menu Screen (Requirements 6, 7, 10, 11) */}
         {phase === "menu" && (
           <div
@@ -874,7 +886,7 @@ export function RacingGame() {
               "absolute inset-0 z-30 flex flex-col overflow-y-auto",
               // PC: the wide, bright road shows through the middle of the screen,
               // so dim the whole view and gather the menu into one solid panel.
-              isPc ? "bg-scrim backdrop-blur-[3px]" : "justify-between",
+              isPc ? "bg-scrim backdrop-blur-[3px]" : landscape ? "flex-row bg-scrim" : "justify-between",
             )}
           >
             <div
@@ -888,7 +900,9 @@ export function RacingGame() {
                 "animate-rise-in px-6 text-center",
                 isPc
                   ? "pb-2 pt-2 drop-shadow-[0_2px_8px_var(--color-background)]"
-                  : "bg-scrim-top pb-6 pt-[max(env(safe-area-inset-top),24px)]",
+                  : landscape
+                    ? "flex w-[44%] shrink-0 flex-col justify-center py-4 pl-[max(env(safe-area-inset-left),24px)]"
+                    : "bg-scrim-top pb-6 pt-[max(env(safe-area-inset-top),24px)]",
               )}
             >
               <div className="mx-auto mb-2 flex items-center justify-center gap-2">
@@ -909,10 +923,10 @@ export function RacingGame() {
                 alt="Emblem"
                 width={200}
                 height={228}
-                className="mx-auto mb-2 h-20 w-auto drop-shadow-[0_4px_16px_var(--color-primary)]"
+                className={cn("mx-auto mb-2 w-auto drop-shadow-[0_4px_16px_var(--color-primary)]", landscape ? "h-14" : "h-20")}
               />
               <p className="font-display text-lg tracking-[0.4em] text-primary">{t.brand}</p>
-              <h1 className="font-display text-6xl leading-[0.88] text-foreground">{t.model}</h1>
+              <h1 className={cn("font-display leading-[0.88] text-foreground", landscape ? "text-5xl" : "text-6xl")}>{t.model}</h1>
               <p className="mt-1 font-display text-xl tracking-[0.3em] text-muted-foreground">
                 {t.subtitle}
               </p>
@@ -924,7 +938,9 @@ export function RacingGame() {
                 "animate-rise-in flex flex-col items-center gap-4 px-6 text-center",
                 isPc
                   ? "corner-cut border border-hud-border bg-hud py-6 shadow-lg backdrop-blur-md"
-                  : "bg-scrim-bottom pb-[max(env(safe-area-inset-bottom),24px)] pt-6",
+                  : landscape
+                    ? "min-h-0 flex-1 justify-center gap-3 overflow-y-auto py-4 pr-[max(env(safe-area-inset-right),24px)]"
+                    : "bg-scrim-bottom pb-[max(env(safe-area-inset-bottom),24px)] pt-6",
               )}
             >
               {/* Game Mode Selector (Requirement 6: Police Escape mode) */}
@@ -964,7 +980,7 @@ export function RacingGame() {
               </div>
 
               {/* Controls guide */}
-              <ul className="space-y-1 text-xs font-medium text-foreground/80 max-w-xs">
+              <ul className={cn("space-y-1 text-xs font-medium text-foreground/80 max-w-xs", landscape && "hidden")}>
                 {t.instructions.map((ins, idx) => (
                   <li key={idx} className="flex items-center justify-center gap-1.5">
                     <span className="size-1.5 rounded-full bg-primary" />
@@ -977,7 +993,7 @@ export function RacingGame() {
               <Button
                 variant="race"
                 size="xl"
-                className="w-full max-w-xs text-xl py-6 font-display tracking-widest shadow-glow"
+                className={cn("w-full max-w-xs text-xl font-display tracking-widest shadow-glow", landscape ? "py-5" : "py-6")}
                 disabled={garageBusy}
                 onClick={() => startGame()}
               >
@@ -985,7 +1001,7 @@ export function RacingGame() {
               </Button>
 
               {/* Secondary Buttons: Paint / Change Car (Requirement 7) & Settings (Requirement 10) */}
-              <div className="flex w-full max-w-xs flex-col gap-2">
+              <div className={cn("w-full max-w-xs gap-2", landscape ? "grid grid-cols-2" : "flex flex-col")}>
                 <Button
                   variant="outline"
                   size="sm"
@@ -1039,8 +1055,8 @@ export function RacingGame() {
 
         {/* Game Over / Victory Screen */}
         {phase === "over" && result && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center bg-scrim px-6">
-            <div className="animate-rise-in w-full max-w-xs text-center">
+          <div className="absolute inset-0 z-30 flex items-center justify-center overflow-y-auto bg-scrim px-6 py-4">
+            <div className="animate-rise-in m-auto w-full max-w-xs text-center">
               {/* Header based on outcome: crash vs busted vs escaped */}
               {result.outcome === "escaped" ? (
                 <>
