@@ -3,6 +3,8 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* Phone lying down (short landscape screen). */
+@custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 500px));
 
 /*
  * Design system definition.

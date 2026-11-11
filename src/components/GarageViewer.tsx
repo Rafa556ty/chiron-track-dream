@@ -247,7 +247,7 @@ export function GarageViewer({ labels, onClose, selectedCar, chironOwned, onSele
 
   return (
     <div className="absolute inset-0 z-40 flex flex-col bg-background">
-      <div className="flex items-center justify-between gap-3 border-b border-hud-border bg-scrim-top px-5 pb-3 pt-[max(env(safe-area-inset-top),18px)]">
+      <div className="flex items-center justify-between gap-3 border-b border-hud-border bg-scrim-top px-5 pb-3 pt-[max(env(safe-area-inset-top),18px)] phone-landscape:pb-1.5 phone-landscape:pt-2">
         <div>
           <h2 className="font-display text-2xl leading-none tracking-[0.25em] text-primary">
             {labels.title}
@@ -297,10 +297,10 @@ export function GarageViewer({ labels, onClose, selectedCar, chironOwned, onSele
         )}
       </div>
 
-      <div className="flex shrink-0 justify-center gap-3 border-t border-hud-border bg-hud px-3 py-3">
+      <div className="flex shrink-0 justify-center gap-3 border-t border-hud-border bg-hud px-3 py-3 phone-landscape:py-1.5">
         {([{ id: 'revuelto' as const, name: 'Lamborghini Revuelto', image: revueltoPhoto }, { id: 'chiron' as const, name: 'Bugatti Chiron', image: chironPhoto.url }]).map(c => (
-          <Button key={c.id} variant="outline" disabled={busy} aria-pressed={selectedCar === c.id} aria-label={`Selecionar ${c.name}`} onClick={() => onSelect(c.id)} className={`h-auto w-40 max-w-[44%] flex-col gap-1 overflow-hidden p-0 pb-2 ${selectedCar === c.id ? 'border-primary bg-primary/10' : 'border-hud-border bg-card'}`}>
-            <img src={c.image} alt={c.name} className="h-16 w-full object-cover" />
+          <Button key={c.id} variant="outline" disabled={busy} aria-pressed={selectedCar === c.id} aria-label={`Selecionar ${c.name}`} onClick={() => onSelect(c.id)} className={`h-auto w-40 max-w-[44%] flex-col gap-1 overflow-hidden p-0 pb-2 phone-landscape:py-1.5 ${selectedCar === c.id ? 'border-primary bg-primary/10' : 'border-hud-border bg-card'}`}>
+            <img src={c.image} alt={c.name} className="h-16 w-full object-cover phone-landscape:hidden" />
             <span className="text-xs">{c.name}</span>
             <span className="text-[10px] text-primary">{c.id === selectedCar ? 'SELECIONADO' : c.id === 'chiron' && !chironOwned ? 'RESGATAR GRÁTIS' : 'DISPONÍVEL'}</span>
           </Button>
