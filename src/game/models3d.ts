@@ -556,6 +556,45 @@ function splitBugattiWing(
   return body;
 }
 
+/**
+ * Playable Chiron wheel finish: the rim material (ChironMI_Rim1) ships white;
+ * tint it piano-black / gunmetal. Tyre and brake disc materials are untouched.
+ */
+export const CHIRON_RIM_FINISH = { color: 0x141518, metalness: 0.9, roughness: 0.3 } as const;
+export function blackenChironRims(root: THREE.Object3D) {
+  root.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
+      if (mat?.name !== "ChironMI_Rim1") continue;
+      const std = mat as THREE.MeshStandardMaterial;
+      std.color.setHex(CHIRON_RIM_FINISH.color);
+      std.metalness = CHIRON_RIM_FINISH.metalness;
+      std.roughness = CHIRON_RIM_FINISH.roughness;
+      std.needsUpdate = true;
+    }
+  });
+}
+
+/** Cabin parts you never see from the race cameras (seats, suede, dashboard). */
+const CHIRON_HIDDEN_ON_TRACK = /Cabin_Leather|Cabin_Suede|Dashboard/i;
+/** Parts too small/enclosed to need their own sun-shadow pass while racing. */
+const CHIRON_NO_SHADOW_ON_TRACK = /Cabin|Dashboard|Glass|Light|Logo|Grid|Mirror|caliper|Brake|Engine|red_glass/i;
+/**
+ * Race-only trim for the playable Chiron: same exterior mesh, but hidden
+ * interior parts are skipped and minor parts stop casting duplicate shadows.
+ * The garage keeps the full model.
+ */
+export function trimChironForTrack(car: THREE.Object3D) {
+  car.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh || Array.isArray(m.material)) return;
+    const name = m.material.name || m.name;
+    if (CHIRON_HIDDEN_ON_TRACK.test(name)) m.visible = false;
+    if (CHIRON_NO_SHADOW_ON_TRACK.test(name)) m.castShadow = false;
+  });
+}
+
 /** Normalised, shared template for one car model (clone it per instance). */
 export function loadCar(key: ModelKey): Promise<THREE.Group> {
   let p = cache.get(key);
@@ -565,6 +604,7 @@ export function loadCar(key: ModelKey): Promise<THREE.Group> {
       .then(parseGlb)
       .then((scene) => {
         if (key === "revuelto") paintRevuelto(scene);
+        if (key === "chiron") blackenChironRims(scene);
         if (TRAFFIC_KEYS.has(key)) styleTraffic(scene, key as TrafficModelKey);
         if (key === "bmw") paintBmw(scene);
         if (key === "mustang") {

@@ -16,7 +16,7 @@ import {
 } from "./vehicle-lights";
 import type { RenderSnapshot } from "./engine";
 import type { CarType } from "./traffic";
-import { loadCar, type ModelKey } from "./models3d";
+import { loadCar, trimChironForTrack, type ModelKey } from "./models3d";
 import { FOOTPRINTS, TRAFFIC_DRAW_AHEAD } from "./traffic-rules";
 import { CAMERA_POSES, nextCameraView, type CameraView } from "./camera-views";
 import {
@@ -280,6 +280,7 @@ export class Scene3D {
   }
 
   private setupChiron(car: THREE.Group) {
+    trimChironForTrack(car);
     const rig = createTrafficLightRig("bugatti", car, 1, false);
     this.chironRig = rig;
     for (const part of rig.all) { part.count = part === rig.wipers ? 2 : 1; car.add(part); }
