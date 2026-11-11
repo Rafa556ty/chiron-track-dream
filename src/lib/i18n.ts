@@ -17,8 +17,8 @@ export const LANGUAGES: LanguageInfo[] = [
 
 export const TRANSLATIONS = {
   "pt-BR": {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "RODOVIA",
     demoBadge: "DEMO",
     modeSelect: "MODO DE JOGO",
@@ -81,8 +81,8 @@ export const TRANSLATIONS = {
     garageError: "O carro não pôde ser carregado",
   },
   "pt-PT": {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "AUTOESTRADA",
     demoBadge: "DEMO",
     modeSelect: "MODO DE JOGO",
@@ -145,8 +145,8 @@ export const TRANSLATIONS = {
     garageError: "Não foi possível carregar o carro",
   },
   en: {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "HIGHWAY DASH",
     demoBadge: "DEMO",
     modeSelect: "GAME MODE",
@@ -209,8 +209,8 @@ export const TRANSLATIONS = {
     garageError: "The car could not be loaded",
   },
   it: {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "AUTOSTRADA",
     demoBadge: "DEMO",
     modeSelect: "MODALITÀ DI GIOCO",
@@ -273,8 +273,8 @@ export const TRANSLATIONS = {
     garageError: "Impossibile caricare l'auto",
   },
   fr: {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "AUTOROUTE",
     demoBadge: "DEMO",
     modeSelect: "MODE DE JEU",
@@ -337,8 +337,8 @@ export const TRANSLATIONS = {
     garageError: "La voiture n'a pas pu être chargée",
   },
   ja: {
-    brand: "LAMBORGHINI",
-    model: "REVUELTO",
+    brand: "SUPERCAR",
+    model: "HIGHWAY DASH",
     subtitle: "ハイウェイダッシュ",
     demoBadge: "DEMO",
     modeSelect: "ゲームモード",
